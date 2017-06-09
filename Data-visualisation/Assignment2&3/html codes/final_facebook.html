@@ -1,0 +1,841 @@
+<html lang="en">
+<head>
+    <title>dc.js - Ordinal Bar Chart Example</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.css"/>
+    
+    <style type="text/css"> 
+      h4 span {
+      font-size:10px;
+      font-weight:normal;
+      }
+      
+.colorbar .axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+		}
+
+.colorbar .axis .domain{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+		}
+
+</style>      
+</head>
+<body>
+
+<div class="container">
+
+<h5><center><u><i> Facebook Dataset Visualisations</u></i></h5>
+<button type="button" id="click_me2" value="Prev_page">prev</button> 
+<p><center><italics>Five Different Plots have been explored for this data set viz scatter-plot, Histogram, Line , Bar and Heat Charts.</p>
+
+  <p>You can change X and Y axis from the options given and play with the charts.</p>
+  
+<h4>&nbsp&nbsp&nbsp&nbsp&nbspSelect X axis for Scatterplot &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Select x-axis for line-bar-heat charts </h4>
+<select id="select-operation_x">  
+    <option value="comment">Comment</option>
+    <option value="Lifetime Post Total Reach">Lifetime Post Total Reach</option>
+    <option value="Lifetime Post Consumers">Lifetime Post Consumers</option>
+	<option value="Page total likes">Page Total Likes </option>
+    <option value="Lifetime Post Total Impressions">Lifetime Post Total impressions</option>
+    <option value="Lifetime Engaged Users">Lifetime Engaged Users</option>
+    <option value="Lifetime Post Consumptions">Lifetime Post Consumptions</option>
+    <option value="Lifetime Post Impressions by people who have liked your Page">Lifetime Impressions by People who like page</option> 
+    <option value="Lifetime Post reach by people who like your Page">Lifetime reach who like page</option> 
+    <option value="Lifetime People who have liked your Page and engaged with your post">People who like and engage post</option>  
+    <option value="like">Like</option> 
+    <option value="share">Share</option> 
+    <option value="Total Interactions">Total Interactions</option></select>
+    
+<select id="select-x"> 
+    <option value="Post Month">Post Month</option>
+    <option value="Category">Category</option>
+    <option value="Post Weekday">Post Weekday</option>
+    <option value="Post Hour">Post Hour</option>
+    <option value="Paid">Paid</option>
+</select> 
+
+<button type="button" id="click_me" value="Another Visualisation">Another Visualisation</button> 
+
+<h4><br>Select Y axis &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspSelect color attribute</h4>
+<select id="select-operation_y">
+    <option value="Lifetime People who have liked your Page and engaged with your post">People who like and engage post</option>
+    <option value="comment">Comment</option> 
+    <option value="Lifetime Post Consumers">Lifetime Post consumers</option>
+    <option value="Lifetime Post Total Reach">Lifetime Post Total Reach</option>
+    <option value="Lifetime Post Total Impressions">Lifetime Post Total impressions</option>
+    <option value="Lifetime Engaged Users">Lifetime Engaged Users</option>
+    <option value="Lifetime Post Consumptions">Lifetime Post Consumptions</option>
+    <option value="Lifetime Post Impressions by people who have liked your Page">Lifetime Impressions by People who like page</option> 
+    <option value="Lifetime Post reach by people who like your Page">Lifetime reach who like page</option>  
+    <option value="like">Like</option> 
+    <option value="share">Share</option> 
+    <option value="Total Interactions">Total Interactions</option>                        
+</select>            
+</select>
+<select id="select-color"> 
+    <option value="Type">Type </option>
+    <option value="Category">Category</option>
+    <option value="Post Month">Post Month</option>
+    <option value="Post Weekday">Post Weekday</option>
+    <option value="Post Hour">Post Hour</option>
+    <option value="Paid">Paid</option>
+</select>   
+<br><br>
+    
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.js"></script>
+    
+<div id="scat"> <h5>Relationship between various facebook insights. </h5>
+     <span> <a class="reset"  href="javascript:chart.filterAll();dc.redrawAll();" style="display: none;"> reset</a>
+    </span>
+  </div>
+   
+<div id = "line">
+    <h5>Trend of various insights(Y-axis) over Month,Hour etc(X-axis) </h5>
+    <span>
+          <a class="reset"
+            href="javascript:lchart.filterAll();dc.redrawAll();"
+            style="display: none;" >
+            reset
+          </a>
+    </span>
+   </div>  
+
+<div id="bc"><span> <a class="reset"  href="javascript:bchart.filterAll();dc.redrawAll();" style="display: none;"> reset</a>
+    </span> <h5>Sum. of various insights(Y-axis) over<br> Month,Weekday,Hour etc(X-axis) </h5>
+     
+  </div>   
+
+<div id = "pie">
+    <a class="reset"
+            href="javascript:pchart.filterAll();dc.redrawAll();"
+            style="display: none;">
+            reset
+          </a></span><h5>Percentage of samples over various types of attribues such as Type <br> Hour,Weekday,Month</h5><span>
+</div>
+   
+<div id = "heat"><a class="reset"
+            href="javascript:hchart.filterAll();dc.redrawAll();"
+            style="display: none;">
+            reset
+          </a></span>
+    <h5>Distribution of various insights(Y-axis chosen) over<br> Month,Weekday,Hour etc(X-axis) for a particular color attribute chosen </h5><span>
+   </div>         
+   
+<div id="h-label">
+<script type="text/javascript">
+var svg  = d3.select("body")
+            	.append("svg")
+			    .attr("width", 200)
+   				.attr("height", 400);
+   						 
+</script>
+</div>    
+         
+<script type="text/javascript">
+
+      chart = dc.seriesChart('#scat'),
+      lchart = dc.seriesChart("#line");
+      bchart = dc.barChart('#bc');
+      pchart = dc.pieChart('#pie');
+      hchart = dc.heatMap("#heat");
+  var xcolumn = 'comment'
+  var xxcolumn = 'Post Month'
+  var ycolumn = 'Lifetime People who have liked your Page and engaged with your post'
+  var ccolumn = 'Type'
+  
+
+  d3.csv('facebook_output.csv', function(error, data) { 
+  
+data.forEach(function(d) { d[ycolumn] = +d[ycolumn]; 
+                            d[xcolumn] = +d[xcolumn];
+                            d[xxcolumn] = +d[xxcolumn];}); 
+                            
+              if(error)
+          throw new Error(error);
+          
+          ndx            = crossfilter(data),
+           scDimension   = ndx.dimension(function(d) {return [d[ccolumn], +d[xcolumn],+d[ycolumn]];}),
+           scGroup 		 = scDimension.group();
+        
+        var domain = data.map(function (d) {return +d[xcolumn]; });	
+        var domy = data.map(function (d) {return +d[ycolumn]; });	
+		
+		minimum = d3.min(domain);
+		maximum = d3.max(domain); 
+		
+		miny = d3.min(domy);
+		maxy = d3.max(domy);   
+		
+		console.log(miny,maxy);
+		
+		var symbolScale = d3.scale.ordinal().range(d3.svg.symbolTypes);
+  		var symbolAccessor = function(d) { return symbolScale(d.key[0]); };
+  
+      var subChart = function(c) {
+    return dc.scatterPlot(c)
+       .symbol(symbolAccessor)
+        .symbolSize(8)
+        .highlightedSize(10)
+  		};
+  		
+  		
+  		if ( xcolumn == 'Lifetime Post Impressions by people who have liked your Page')
+           {
+           
+               label = 'Post Imp. by ones who like your page'
+           }
+           else if ( xcolumn == 'Lifetime Post reach by people who like your Page')
+           {
+           
+               label = 'Post reach by ones who like your page'
+           }
+           else if ( xcolumn == 'Lifetime People who have liked your Page and engaged with your post')
+           {
+           
+               label = ' People liked & engaged with your post'
+           }
+           else
+           {
+               label = xcolumn
+               
+           }
+           
+
+           if ( ycolumn == 'Lifetime Post Impressions by people who have liked your Page')
+           {
+           
+               label2 = 'Post Imp. by ones who like your page'
+           }
+           else if ( ycolumn == 'Lifetime Post reach by people who like your Page')
+           {
+           
+               label2 = 'Post reach by ones who like your page'
+           }
+           else if ( ycolumn == 'Lifetime People who have liked your Page and engaged with your post')
+           {
+           
+               label2 = ' People liked & engaged with your post'
+           }
+           else
+           {
+               label2 = ycolumn
+               
+           }
+           
+  chart
+    .width(500)
+    .height(350)
+    .chart(subChart)
+    .x(d3.scale.linear().domain([minimum,maximum]))
+    .y(d3.scale.linear().domain([miny,maxy]))
+    .brushOn(false)
+    .yAxisLabel(label2)
+    .xAxisLabel(label)
+    .clipPadding(10)
+    .elasticY(true)
+    .dimension(scDimension)
+    .group(scGroup)
+    .mouseZoomable(false)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.key[2] ;})
+    .shareTitle(true) // allow default scatter title to work
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.key[2];})
+    .legend(dc.legend().x(350).y(20).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  //chart.yAxis().tickFormat(d3.format('.2s'));        		
+  //chart.margins().left += 40;
+  
+  
+  		   lcDimension        = ndx.dimension(function(d){return [d[ccolumn], +d[xxcolumn]];}),
+           lcGroup 		 = lcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+           
+           var dom2 = data.map(function (d) {return +d[xxcolumn]; });	
+		
+		minimum2 = d3.min(dom2);
+		maximum2 = d3.max(dom2);   
+		
+		minimumy = d3.min(domy);
+        maximumy = lcGroup.top(Infinity)[0].value;
+        
+      lchart
+    .width(600)
+    .height(350)
+    .chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
+    .x(d3.scale.linear().domain([minimum2,maximum2]))
+    .y(d3.scale.linear().domain([minimumy,maximumy]))
+    .brushOn(false)
+    .yAxisLabel(label2)
+    .xAxisLabel(xxcolumn)
+    .clipPadding(10)
+    //.elasticY(true)
+    .dimension(lcDimension)
+    .group(lcGroup)
+    .title(function(d) {
+        	return xxcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.value ;})
+    .mouseZoomable(false)
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.value;})
+    .legend(dc.legend().x(450).y(10).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  lchart.yAxis().tickFormat(d3.format(".2s"));
+  
+   
+   
+   bcDimension        = ndx.dimension(function(d){return d[xxcolumn];}),
+           bcGroup 		 = bcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+        
+        
+   bchart
+            .width(500)
+            .height(350)
+                .rescale()
+            .dimension(bcDimension)
+            .group(bcGroup)
+            .transitionDuration(500)
+            .centerBar(false)
+            .brushOn(true)
+            .title(function(d) {
+        	return xxcolumn +  ": "  + d.key + "\n" +
+               "Sum: " +  +d.value ;})
+            .x(d3.scale.ordinal())
+            .xAxisLabel(xxcolumn)
+            .yAxisLabel("Tot. " + label2)
+           .xUnits(dc.units.ordinal)
+            .elasticY(true)
+            .xAxis().tickFormat();
+            
+            bchart.ordering(function(d) { return d[xxcolumn]; });
+    		bchart.yAxis().tickFormat(d3.format('.2s'));        		
+
+      		runDim = ndx.dimension(function(d) { return [+d[xxcolumn], d[ccolumn]]; }),
+      		runGroup3 = runDim.group().reduceSum(function(d) { return +d[ycolumn]; });
+      		
+     
+     pDimension =  ndx.dimension(function(d){return d[ccolumn];})
+     pGroup = pDimension.group().reduceCount();
+       
+     pchart
+          .width(400)
+          .height(510)
+          .slicesCap(20)
+          .innerRadius(60)
+          .externalLabels(50)
+          .externalRadiusPadding(50)
+          .drawPaths(true)
+          .dimension(pDimension)
+          .group(pGroup)
+          .colors(d3.scale.category10())
+          .legend(dc.legend());
+          
+          pchart.on('pretransition', function(pchart) {
+          pchart.selectAll('text.pie-slice')
+             //.text('')
+            //.append('tspan')
+              .text(function(d) { return d.name; })
+            .append('tspan')
+              //.attr('x', 60)
+              .attr('text-anchor', 'end')
+              .text( function(d){ return Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';} )}); 		
+              
+      var heatColorMapping = d3.scale.linear()
+            .domain([-23, 0, 23])
+            .range(["pink", "blue"]);        
+		 
+  	  hchart
+    	.width(45 * 20 + 80)
+    	.height(45 * 5 + 40)
+    	.dimension(runDim)
+   	    .group(runGroup3)
+    	.keyAccessor(function(d) { return +d.key[0]; })
+    	.valueAccessor(function(d) { return d.key[1]; })
+    	.colorAccessor(function(d) { return +d.value; })
+    	.title(function(d) {
+        	return xxcolumn +  ": "  + d.key[0] + "\n" +
+               ccolumn + ": " + d.key[1] + "\n" +
+               "Total " + ycolumn + " : " +d.value ;})
+    	.colors(heatColorMapping)
+    	.calculateColorDomain();	
+    	
+    	    dc.renderAll();
+    	    
+    	var g = svg.append("g").classed("colorbar",true),
+		cb = colorBar().color(d3.scale.linear().domain([-23, 0, 23]).range(["pink", "blue"])).size(350).lineWidth(80).precision(4);
+
+		g.call(cb);
+    
+    function colorBar(){
+    var orient = "right",
+    lineWidth = 40, //Function?... because that would be coooooool... not sure if it is compatible with axis.js
+    size_ = 300,
+    tickFormat = d3.format("3e"),
+    color = d3.scale.linear().domain([0, 0.5, 1]).range(["pink", "blue"]), //v -> color
+    line = d3.svg.line().interpolate("basis"),
+    precision = 8,
+    points_,
+    tickSize_; 
+
+    function component(selection){
+        selection.each(function(data,index){
+            var container = d3.select(this),
+            tickSize = tickSize_ || lineWidth,
+            n,
+            points = points_ || (((orient == "left") || (orient == "right"))?[[0,size_],[0,0]]:[[size_,0],[0,0]]),
+            quads = quad(sample(line(points),precision)),
+            size = (points)?n:size_,
+            aScale = color.copy().interpolate(d3.interpolate).domain(d3.extent(color.domain())).range([size,0]), //v -> px
+            colorExtent = d3.extent(color.domain()),
+            normScale = color.copy().domain(color.domain().map(function(d){ return (d - colorExtent[0])/ (colorExtent[1] - colorExtent[0])})),
+
+            //Save values for transitions            
+            oldLineWidth = this.__lineWidth__ || lineWidth;
+            oldQuads = this.__quads__ || quads;
+            this.__quads__ = quads;
+            this.__lineWidth__ = lineWidth;
+
+            //Enters
+            var bar = container.selectAll("path.c").data(d3.range(quads.length), function(d){return d}),
+            bEnter = bar.enter().insert("path","g.axis").classed("c",true), 
+            bExit = d3.transition(bar.exit()).remove(),
+            bUpdate = d3.transition(bar),
+            bTransform = function(selection,f,lw){
+                selection.style("fill", function(d) { return normScale(f(d).t); })
+                    .style("stroke", function(d) { return normScale(f(d).t); })
+                    .attr("d", function(d) { var p = f(d); return lineJoin(p[0], p[1], p[2], p[3], lw); });};
+
+            bEnter.call(bTransform,function(d){return oldQuads[oldQuads.length - 1]},oldLineWidth); // enter from last of oldQuad
+            bExit.call(bTransform,function(d){return quads[quads.length - 1]},lineWidth); //exit from last of quads
+            bUpdate.call(bTransform,function(d){return quads[d]},lineWidth)
+
+            var colorBarAxis = d3.svg.axis().scale(aScale).orient(orient)
+                .tickSize(tickSize).tickFormat(tickFormat),
+            a = container.selectAll("g.axis").data(function(d){return (aScale)?[1]:[]}), //axis container
+            aEnter = a.enter().append("g").classed("axis",true),
+            aExit = d3.transition(a.exit()).remove(),
+            aUpdate = d3.transition(a).call(colorBarAxis),
+            aTransform = function(selection,lw){
+                selection.attr("transform", "translate(" 
+                               + (((orient == "right") || (orient == "left"))?-lw/2:0) + "," 
+                               + (((orient == "right") || (orient =="left"))?0:lw/2) + ")");};
+
+            aEnter.call(aTransform,oldLineWidth);
+            aExit.call(aTransform,lineWidth);
+            aUpdate.call(aTransform,lineWidth);
+            
+            // Sample the SVG path string "d" uniformly with the specified precision.
+            function sample(d,pre) {
+                var path = document.createElementNS(d3.ns.prefix.svg, "path");
+                path.setAttribute("d", d);
+
+                n = path.getTotalLength();
+                
+                var t = [0], i = 0, dt = pre;
+                while ((i += dt) < n) t.push(i);
+                t.push(n);
+
+                return t.map(function(t) {
+                    var p = path.getPointAtLength(t), a = [p.x, p.y];
+                    a.t = t / n;
+                    return a;
+                });
+
+                document.removeChild(path);
+            }
+
+            // Compute quads of adjacent points [p0, p1, p2, p3].
+            function quad(pts) {
+                return d3.range(pts.length - 1).map(function(i) {
+                    var a = [pts[i - 1], pts[i], pts[i + 1], pts[i + 2]];
+                    a.t = (pts[i].t + pts[i + 1].t) / 2;
+                    return a;
+                });
+            }
+
+            // Compute stroke outline for segment p12.
+            function lineJoin(p0, p1, p2, p3, width) {
+                var u12 = perp(p1, p2),
+                r = width / 2,
+                a = [p1[0] + u12[0] * r, p1[1] + u12[1] * r],
+                b = [p2[0] + u12[0] * r, p2[1] + u12[1] * r],
+                c = [p2[0] - u12[0] * r, p2[1] - u12[1] * r],
+                d = [p1[0] - u12[0] * r, p1[1] - u12[1] * r];
+
+                if (p0) { // clip ad and dc using average of u01 and u12
+                    var u01 = perp(p0, p1), e = [p1[0] + u01[0] + u12[0], p1[1] + u01[1] + u12[1]];
+                    a = lineIntersect(p1, e, a, b);
+                    d = lineIntersect(p1, e, d, c);
+                }
+
+                if (p3) { // clip ab and dc using average of u12 and u23
+                    var u23 = perp(p2, p3), e = [p2[0] + u23[0] + u12[0], p2[1] + u23[1] + u12[1]];
+                    b = lineIntersect(p2, e, a, b);
+                    c = lineIntersect(p2, e, d, c);
+                }
+
+                return "M" + a + "L" + b + " " + c + " " + d + "Z";
+            }
+
+            // Compute intersection of two infinite lines ab and cd.
+            function lineIntersect(a, b, c, d) {
+                var x1 = c[0], x3 = a[0], x21 = d[0] - x1, x43 = b[0] - x3,
+                y1 = c[1], y3 = a[1], y21 = d[1] - y1, y43 = b[1] - y3,
+                ua = (x43 * (y1 - y3) - y43 * (x1 - x3)) / (y43 * x21 - x43 * y21);
+                return [x1 + ua * x21, y1 + ua * y21];
+            }
+
+            // Compute unit vector perpendicular to p01.
+            function perp(p0, p1) {
+                var u01x = p0[1] - p1[1], u01y = p1[0] - p0[0],
+                u01d = Math.sqrt(u01x * u01x + u01y * u01y);
+                return [u01x / u01d, u01y / u01d];
+            }            
+            
+        })}
+    
+    component.orient = function(_) {
+        if (!arguments.length) return orient;
+        orient = _;
+        return component;
+    };
+
+    component.lineWidth = function(_) {
+        if (!arguments.length) return lineWidth;
+        lineWidth = _;
+        return component;
+    };
+
+    component.size = function(_) {
+        if (!arguments.length) return size_;
+        size_ = _;
+        return component;
+    };
+    
+    component.tickFormat = function(_) {
+        if (!arguments.length) return tickFormat;
+        tickFormat = _;
+        return component;
+    };
+
+    component.tickFormat = function(_) {
+        if (!arguments.length) return tickSize_;
+        tickSize_ = _;
+        return component;
+    };
+
+    component.color = function(_) {
+        if (!arguments.length) return color;
+        color = _;
+        return component;
+    };
+
+    component.precision = function(_) {
+        if (!arguments.length) return precision;
+        precision = _;
+        return component;
+    };
+
+    component.points = function(_) {
+        if (!arguments.length) return points_;
+        points_ = _;
+        return component;
+    };
+
+    component.line = function(_) {
+        if (!arguments.length) return line;
+        line = _;
+        return component;
+    };
+
+    return component;
+}
+
+    
+    function chart_redraw(xcolumn , ycolumn, xxcolumn, ccolumn)
+    {
+    	ndx            = crossfilter(data),
+    	scDimension   = ndx.dimension(function(d) {return [d[ccolumn], +d[xcolumn],+d[ycolumn]];}),
+           scGroup 		 = scDimension.group();
+        
+        var domain = data.map(function (d) {return +d[xcolumn]; });	
+		
+		minimum = d3.min(domain);
+		maximum = d3.max(domain);   
+		
+		
+		var symbolScale = d3.scale.ordinal().range(d3.svg.symbolTypes);
+  		var symbolAccessor = function(d) { return symbolScale(d.key[0]); };
+  
+      var subChart = function(c) {
+    return dc.scatterPlot(c)
+       .symbol(symbolAccessor)
+        .symbolSize(8)
+        .highlightedSize(10)
+  		};
+  		
+  		if ( xcolumn == 'Lifetime Post Impressions by people who have liked your Page')
+           {
+           
+               label = 'Post Imp. by ones who like your page'
+           }
+           else if ( xcolumn == 'Lifetime Post reach by people who like your Page')
+           {
+           
+               label = 'Post reach by ones who like your page'
+           }
+           else if ( xcolumn == 'Lifetime People who have liked your Page and engaged with your post')
+           {
+           
+               label = ' People liked & engaged with your post'
+           }
+           else
+           {
+               label = xcolumn
+               
+           }
+           
+
+           if ( ycolumn == 'Lifetime Post Impressions by people who have liked your Page')
+           {
+           
+               label2 = 'Post Imp. by ones who like your page'
+           }
+           else if ( ycolumn == 'Lifetime Post reach by people who like your Page')
+           {
+           
+               label2 = 'Post reach by ones who like your page'
+           }
+           else if ( ycolumn == 'Lifetime People who have liked your Page and engaged with your post')
+           {
+           
+               label2 = ' People liked & engaged with your post'
+           }
+           else
+           {
+               label2 = ycolumn
+               
+           }
+      
+      		     
+  chart
+    .width(500)
+    .height(350)
+    .chart(subChart)
+    .x(d3.scale.linear().domain([minimum,maximum]))
+    .brushOn(false)
+    .yAxisLabel(label2)
+    .xAxisLabel(label)
+    .clipPadding(10)
+    .elasticY(true)
+    .dimension(scDimension)
+    .group(scGroup)
+    .mouseZoomable(false)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.key[2] ;})
+    .shareTitle(true) // allow default scatter title to work
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.key[2];})
+    .legend(dc.legend().x(350).y(20).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  chart.yAxis().tickFormat(d3.format('.2s'));        		
+  //chart.margins().left += 40;
+  
+  
+  		   lcDimension        = ndx.dimension(function(d){return [d[ccolumn], +d[xxcolumn]];}),
+           lcGroup 		 = lcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+           
+           var dom2 = data.map(function (d) {return +d[xxcolumn]; });	
+		
+		minimum2 = d3.min(dom2);
+		maximum2 = d3.max(dom2);  
+		
+		var domy = data.map(function (d) {return +d[ycolumn]; });	
+		
+		minimumy = d3.min(domy);
+        maximumy = lcGroup.top(Infinity)[0].value;
+        
+      lchart
+    .width(600)
+    .height(350)
+    .chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
+    .x(d3.scale.linear().domain([minimum2,maximum2]))
+    .y(d3.scale.linear().domain([minimumy,maximumy]))
+    .brushOn(false)
+    .yAxisLabel(label2)
+    .xAxisLabel(xxcolumn)
+    .clipPadding(10)
+    //.elasticY(true)
+    .dimension(lcDimension)
+    .group(lcGroup)
+    .title(function(d) {
+        	return xxcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.value ;})
+    .mouseZoomable(false)
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.value;})
+    .legend(dc.legend().x(450).y(10).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+    lchart.yAxis().tickFormat(d3.format(".2s"));
+  
+   
+   
+   bcDimension        = ndx.dimension(function(d){return d[xxcolumn];}),
+           bcGroup 		 = bcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+        
+        
+   bchart
+            .width(500)
+            .height(350)
+            .dimension(bcDimension)
+            .group(bcGroup)
+            .transitionDuration(500)
+            .centerBar(false)
+            .title(function(d) {
+        	return xxcolumn +  ": "  + d.key + "\n" +
+               "Sum: " +  +d.value ;})
+            .x(d3.scale.ordinal())//.domain(names))
+            .xAxisLabel(xxcolumn)
+            .yAxisLabel("Tot. " + label2)
+            .xUnits(dc.units.ordinal)
+            .elasticY(true)
+            .xAxis().tickFormat();
+            
+            bchart.ordering(function(d) { return d[xxcolumn]; });
+    		bchart.yAxis().tickFormat(d3.format('.2s'));        		
+
+      		runDim = ndx.dimension(function(d) { return [+d[xxcolumn], d[ccolumn]]; }),
+      		runGroup3 = runDim.group().reduceSum(function(d) { return +d[ycolumn]; });
+      		
+     
+     pDimension =  ndx.dimension(function(d){return d[ccolumn];})
+     pGroup = pDimension.group().reduceCount();
+       
+     pchart
+          .width(400)
+          .height(510)
+          .slicesCap(20)
+          .innerRadius(60)
+          .externalLabels(50)
+          .externalRadiusPadding(50)
+          .drawPaths(true)
+          .dimension(pDimension)
+          .group(pGroup)
+          .colors(d3.scale.category10())
+          .legend(dc.legend());
+          
+          pchart.on('pretransition', function(pchart) {
+          pchart.selectAll('text.pie-slice')
+             //.text('')
+            //.append('tspan')
+              .text(function(d) { return d.name; })
+            .append('tspan')
+              //.attr('x', 60)
+              .attr('text-anchor', 'end')
+              .text( function(d){ return Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';} )}); 
+      
+      var heatColorMapping = d3.scale.linear()
+            .domain([-23, 0, 23])
+            .range(["pink", "blue"]); 
+	              
+  	  hchart
+    	.width(45 * 20 + 80)
+    	.height(45 * 5 + 40)
+    	.dimension(runDim)
+   	    .group(runGroup3)
+    	.keyAccessor(function(d) { return +d.key[0]; })
+    	.valueAccessor(function(d) { return d.key[1]; })
+    	.colorAccessor(function(d) { return +d.value; })
+    	.title(function(d) {
+        	return xxcolumn +  ": "  + d.key[0] + "\n" +
+               ccolumn + ": " + d.key[1] + "\n" +
+               "Total " + ycolumn + " : "  +d.value ;})
+    	.colors(heatColorMapping)
+    	.calculateColorDomain();
+    	
+    
+    }
+    
+    select = d3.select('#select-operation_x').on('change',function() {
+    		xcolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,xxcolumn,ccolumn);
+    		    dc.redrawAll();
+    });
+    
+    select = d3.select('#select-x').on('change',function() {
+    		xxcolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,xxcolumn,ccolumn);
+    			    dc.redrawAll();
+    });
+    
+    
+    select = d3.select('#select-operation_y').on('change',function() {
+    		ycolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,xxcolumn,ccolumn);
+    			    dc.redrawAll();
+    });
+
+	select = d3.select('#select-color').on('change',function() {
+    		ccolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,xxcolumn,ccolumn);
+    			    dc.redrawAll();
+    });
+
+
+    d3.select('#click_me').on('click',function() {
+    window.location.href = 'table3.html';
+    return false;
+    
+});
+
+d3.select('#click_me2').on('click',function() {
+    window.location.href = 'index.html';
+    return false;
+});
+    
+  });
+</script>
+
+</div>
+
+<h4 style = "position: relative; left: 50px;" >Explanation about the above charts:</h4>
+<p style = "position: relative; left: 50px;">1. The Default Scatterplot is showing the relationship between People who liked and engaged with your post and comments.It differentiates whether<br>
+the comment made is on Photo, Link , Video or status by assigning different color to them. It can be seen that as the comments are increasing on the<br> post so the number of people who have liked
+your page and they like to make more comments on photo rather than status,link or video. Also, people like to<br> engage with the status post but doesn't like to comment on them. <br>
+    <br>2.  The Default linechart is showing the trend of total number of people who have liked or engaged with the post over various months, and for each type.<br> It can be seen that mostly people are engaged during the summer break rather than the winter break and they are mostly engaged with the photo or<br> sometimes status rather than link or video. Its X-axis is not same as of
+    scatterplot, so it can be changed from second drop down.<br>
+    <br>3.  The Histogram gives you the total number of people engaged in various months. Again it can be confirmed that mostly people are engaged either during<br> July or October time- which is
+either the  summer break or the festival time. Its X-axis is  same as that of Linechart which can be changed from second drop down. <br>
+   <br> 4.  Pie chart is showing the percentage of the samples over Photo,Link, Status and Video. It is visible that dataset is mostly talking about the photos than<br> the other types. These attributes can be changed from color attribute drop down menu.<br>
+   <br> 5.  The Heat Map is giving the exact number of people who have liked or engaged on Photo, Link, Video and Status in various months. Color range is from<br> pink(smallest) to
+blue(largest).Again it can be seen that mostly people are engaged during summer time and they like to spend more time on photos rather than<br> status , link or video. Here X-axis is Months,Y-axis is Comments and Type is the color attribute.Its X-axis also can be changed from second drop down menu.<br>
+   <br> 6.  There is one extra visualisation added which is a performance table and can be accessed through 'Another Visualisation' button.<br>
+    <br></p>
+    <p><center><u>Note: Every chart has a selection and probing functionality and a dropdown to change X and Y axis.<br> Also except histogram every chart has a mapping to color attribute.<br></p>
+    
+</body>
+</html>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+      

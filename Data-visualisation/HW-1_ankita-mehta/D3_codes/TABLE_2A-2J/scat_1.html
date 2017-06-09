@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create scatterplot </title>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+    </head>
+    <style>
+        body { font: 12px Arial;}
+        
+        circle{
+        	stroke: red;
+    		stroke-width: 2;
+    		fill: none;
+    		}
+    
+        path { 
+    		stroke: blue ;
+    		stroke-width: 2;
+    		fill: none;
+			}
+        .axis path,
+		.axis line {
+    			fill: none;
+    			stroke: black;
+    			stroke-width: 1;
+    			shape-rendering: crispEdges;
+					}
+		.tooltip {
+ 				 position: absolute;
+				 width: 200px;
+			     height: 28px;
+                 pointer-events: none;
+                 }
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+            
+            var w = 700;
+            var h = 700;
+            var rMin = 1;
+            var rMax = 10;
+            var xcolumn = 'Number of people'
+            var ycolumn = 'Total income'
+            var svg  = d3.select("body")
+            			 .append("svg")
+			             .attr("width", w)
+            			 .attr("height" ,h);
+            			 
+            
+            var xscale = d3.scale.linear().range([50, w-80]);
+			var yscale = d3.scale.linear().range([h-20, 20]);
+			var rscale = d3.scale.log().range([rMin,rMax])
+			
+			var xvalue = function(d) { return d[xcolumn]; } ;
+			var yvalue = function(d) { return d[ycolumn];};
+			
+            var xAxis  = d3.svg.axis()
+              				   .scale(xscale)
+              				   .orient("bottom")
+              				   .ticks(5);
+              			
+            var yAxis  = d3.svg.axis()
+              				   .scale(yscale)
+              				   .orient("left")
+              				   .ticks(5);
+              				          
+            var valueline = d3.svg.line()
+    							  .x(function(d) { return xscale(d[xcolumn]); })
+							      .y(function(d) { return yscale(d[ycolumn]); });
+							      
+			var tooltip = d3.select("body").append("div")
+    						.attr("class", "tooltip")
+						    .style("opacity", 0);
+            
+            d3.csv("../../CSV Files/2j.csv", function(error, data) {
+   				 data.forEach(function(d) {
+        		 	d[xcolumn] = +d[xcolumn];
+               		d[ycolumn] = +d[ycolumn];
+   					 });
+
+    		// Scale the range of the data
+    		xscale.domain(d3.extent(data, function(d) { return d[xcolumn]; }));
+    		yscale.domain([0,d3.max(data, function(d) { return d[ycolumn]; })]);
+    		rscale.domain(d3.extent(data, function(d) { return d['Months worked']; }));
+
+			svg.append("path")
+        	   .attr("class", "line")
+        	   .attr("d", valueline(data));
+        	   
+    		var circles = svg.selectAll("circle")
+            				 .data(data)
+            				 .enter()
+            				 .append("circle")
+            				 .on("mouseover", function(d) {
+        						  tooltip.transition()
+						          	     .duration(200)
+						                 .style("opacity", .9);
+						          tooltip.html(d['Highest level completed'] + "<br/> (" + xvalue(d)
+												        + ", " + yvalue(d)  + ")")
+               							 .style("left", (d3.event.pageX + 10) + "px")
+						                 .style("top", (d3.event.pageY - 30) + "px");
+      							})
+      						 .on("mouseout", function(d) {
+						          tooltip.transition()
+						                 .duration(500)
+						                 .style("opacity", 0);
+						        });
+    		circles.attr
+    		({
+    		
+    		 		cx:function(d){ return xscale(d[xcolumn]);},
+    		 		cy:function(d){ return yscale(d[ycolumn]);},
+    		 		r: function(d){ return rscale(d['Months worked']);},
+    		 		
+    		});
+        	
+        	// append text on top of graph
+        	svg.append("text")
+       		   .attr("x", (w / 2))             
+        	   .attr("y", 20)
+        	   .attr("text-anchor", "middle")  
+        	   .style("font-size", "16px") 
+        	   .style("text-decoration", "underline")  
+        	   .text(xcolumn + " vs " + ycolumn);
+            
+             // x-axis  
+            svg.append("g")
+      		   .attr("class", "x axis")
+		       .attr("transform", "translate(-12," + (h-25) + ")")
+      		   .call(xAxis)
+		       .append("text")
+               .attr("class", "label")
+               .attr("x", w)
+               .attr("y", -6)
+               .style("text-anchor", "end")
+               .text("Number of people");
+
+  			// y-axis
+  			svg.append("g")
+      		   .attr("class", "y axis")
+      		   .attr("transform", "translate(" + 40 + ",0)")
+      		   .call(yAxis)
+    		   .append("text")
+      		   .attr("class", "label")
+      		   .attr("y", 6)
+      		   .attr("dy", ".71em")
+      		   .style("text-anchor", "end")
+      		   .text('T-Inc');
+        	});
+        	
+        
+		</script>
+    </body>
+</html>

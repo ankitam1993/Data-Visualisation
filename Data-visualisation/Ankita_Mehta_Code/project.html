@@ -1,0 +1,864 @@
+<html>
+<head>
+<title>Welcome to my Home page</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<style>
+div {
+  display:inline-block;
+  vertical-align:top;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.background path {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke: steelblue;
+}
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+  cursor: move;
+}
+
+path.line
+{
+    fill: none;
+
+}
+
+span{
+	font-size: 17px;
+	transform: translateX(20%);
+    
+}
+body{
+	-webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.x.axis text {
+    text-anchor: end !important;
+    transform: rotate(-45deg);
+    font: 12px sans-serif;
+    color:#003366;
+}
+
+</style>
+<body background="bg3.jpeg">
+<center>
+<div class="container">
+
+<h1 style="font-size:30px"><center>Adult annual income prediction</h2>
+<hr>
+<!--<h4><center>Kindly use Chrome Browser for this Page to work as required</h4><hr></center>-->
+
+<div>
+<span>
+<p style="font-family:Comic Sans MS; "><i>This blog will help you to analyse various factors which can affect the salary of an adult person using Data Visualisation and various machine learning algorithms.
+The data for this post has been taken from <a href="https://archive.ics.uci.edu/ml/datasets/Adult">UCI Machine Learning Repository</a> which has around 48000 records. The salary of an individual is generally 
+influenced by his/her education level, age, gender and occupation. As we go ahead, firstly we will look at the data, visualise it and analyse in what manner can above parameters affect the income of a person. 
+Then we will also examine how the parameters, affecting the earnings of a person, are related to each other. Next to evaluate our analysis done so far, we will see how the machine learning algorithms will 
+predict the salary of a person - <50k or >50k. As a part of our evaluation, we will also plot the whole data set by reducing its dimensions and check which set of parameters can cluster the dataset into two parts effectively.
+</p></span>
+</div>
+
+<br><br>
+</center>
+<h2 style="font-size:22px"><i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>What does the data contain ?</strong></i><h2>
+
+
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> Census dataset has fifteen features, both nominal and ordinal. Left table is showing the various ordinal attributes (with their possible values) and  
+right table is showing the nominal attributes (with their min, max and average values). Firstly, by hovering the cursor over the world map, it can be seen that 90% records in the Dataset are from USA. Secondly, the field "fnlwgt" ( from the second table ) is nothing
+but the survey weight. So these two features can be ignored for further data analysis.It can also bee seen that people start working from the age of 17 till 99 years of age and some of them work for even 99 hours/week.
+</p> <br>
+
+<br></br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+<div style="padding-left: 100px;">
+<div style="width: 26%;">
+<TABLE BORDER="5" CELLPADDING="4" CELLSPACING="3">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Descriptive Information</H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Ordinal Features </TH>
+      <TH>Possible Values</TH>
+   </TR>
+   <TR ALIGN="CENTER">
+      <TD>Workclass</TD>
+      <TD>Private, Self-employed,Never Worked etc. </TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>Education</TD>
+      <TD>7th,8th,Masters,Doctorate etc.</TD>
+   </TR>
+   <TR  ALIGN="CENTER">   
+      <TD>Marital-status</TD>
+      <TD>Married,Divorced, Never-married etc.</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>Occupation</TD>
+      <TD>Sales,Armed- Forces,Farming-fishing etc.</TD>
+   </TR>   
+   <TR  ALIGN="CENTER">    
+      <TD>Relationship</TD>
+      <TD> Wife, Own-child, Husband etc.</TD>
+   </TR>   
+   <TR  ALIGN="CENTER">    
+      <TD>Sex</TD>
+      <TD>Male or Female.</TD>
+    </TR>   
+   <TR  ALIGN="CENTER">   
+      <TD>Race</TD>
+      <TD>White,Black,Amer- Indian-Eskimo etc.</TD>
+   </TR>   
+   <TR  ALIGN="CENTER">    
+      <TD>Origin</TD>
+      <TD>USA, India, China etc.</TD>  
+   </TR>
+   <TR  ALIGN="CENTER">    
+      <TD>Income</TD>
+      <TD> >50k , <50k </TD>  
+   </TR>
+</TABLE>
+
+</div>
+
+<div style="width: 26%;">
+    <TABLE BORDER="5"    CELLPADDING="4" CELLSPACING="3">
+   <TR>
+      <TH COLSPAN="4"><BR><H3> Statistical Information</H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Nominal Features </TH>
+      <TH>Minimum</TH>
+      <TH>Maximum</TH>
+      <TH>Mean</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD>Age</TD>
+      <TD>17</TD>
+      <TD>90</TD>
+      <TD>38.54</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>Capital-gain</TD>
+      <TD>0</TD>
+      <TD>99999</TD>
+      <TD>1101.43</TD>
+   </TR>
+   <TR  ALIGN="CENTER">   
+      <TD>Capital-loss</TD>
+      <TD>0</TD>
+      <TD>4356</TD>
+      <TD>88.59</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>Hours-per-week</TD>
+      <TD>1</TD>
+      <TD>99</TD>
+      <TD>40.93</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>fnlwgt</TD>
+      <TD>13492</TD>
+      <TD>1490400</TD>
+      <TD>189734.73</TD>
+   </TR>
+    <TR  ALIGN="CENTER"> 
+      <TD>Educational-num</TD>
+      <TD>1</TD>
+      <TD>16</TD>
+      <TD>10.11</TD>
+   </TR>
+</TABLE>
+</div>
+
+<div id="world" style="position: relative;fill-opacity:0.7; height: 600px; width: 500px; margin-top:-100px;"></div>
+
+</div>
+
+<h2 style="font-size:22px"><i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>How does occupation, workclass, marriage and sex impact the salary of a person ?</strong></i><h2>
+
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> After eyeballing the data, lets analyse it using three different plots viz : grouped bar chart, scatterplot and pie chart. All three plots are interacting with each other.
+ There are two menu bars and one reset button. First menu bar is for selecting X-axis for scatterplot, bar and pie chart whereas second menu bar is for selecting Y-axis for scatterplot.
+</p>
+</div>
+
+<div style="padding-top: 80px; display: block;">
+	<h4><center><strong>Select X axis for Scatterplot, Bar chart and Pie Chart</strong></center></h4>
+</div>
+
+<center>
+
+<select id="select-operation_x" style="font-size: 15px;">
+    <option value="occupation">occupation</option>
+    <option value="workclass">workclass</option>
+    <option value="education">education</option> 
+    <option value="marital-status">marital-status</option>
+    <option value="relationship">relationship</option>
+    <option value="race">race</option>
+    <option value="sex">sex</option>
+    
+</select>
+
+<h4><br>&nbsp&nbsp&nbsp&nbsp&nbsp<strong> Select Y axis for Scatterplot</strong></h4>
+<select id="select-operation_y" style="font-size: 15px;">
+    <option value="capital-gain">capital-gain</option>
+	<option value="age">age</option>
+    <option value="capital-loss">capital-loss</option>
+	<option value="hours-per-week">hours-per-week </option>
+	<option value="educational-num">educational-num</option> 
+    
+</select>
+
+<button type="button" style="font-size: 15px;" id="reset" value="reset">Reset all</button> 
+<br></br>
+
+<div id="barchart" ></div> 
+<div id ="pie"></div>
+<div id="scat"></div>
+</center>
+
+<div>
+<section style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;">
+<h4>When you start playing with the charts above, you can easily notice that</h4>
+<ul>
+<li> Education and Educational-num features are conveying same information, which is the level of education of a person. It can be seen by selecting X-axis as the education and Y-axis as the educational-num for the scatterplot.</li>
+<li> According to census data, most famous occupations are either professor-speciality or executive manager which can seen from pie-chart. Also, it has almost equal number of people in both the salary slabs - <50K and >50K. Whereas, other positions have very less number of people
+earning >50K ( from Bar Chart ) and in these professions many people who are earning >50K are working greater than 40 hours/week. </li>
+<li> On selecting workclass from first menu, it can be seen that mostly people work in the private sector has salary < 50K. Whereas other sectors have almost same number of people earning either <50K or >50K. Also there is no minimum age requirement
+for people working in private sector but government sector doesn't prefer to give jobs to younger people.</li>
+<li> Next when you select marital-status from first menu, you can see maximum number of people are either married with civilian spouse or never married and there are very less number of people who are either not-married or divorced but earning >50K salary and have a higher education level. On selecting age in
+second menu, you can see that generally people get married after 20 years of age. </li>
+<li> Now, when you select race from first menu, it can be seen that most people are white, since our dataset has 90% records of US. So this feature cannot not be taken as an influential factor while analysing the salary of a person. </li>
+<li> Moving further, when you select sex from first menu, 68% data is about Male and they start earning at a very small age. Also on comparing their salary on the same education level, males have large salary than females. It can be rationalise in a way that they have larger skill set than females.</li>
+</ul>
+<h4>A very general trend has been seen for capital-gain and capital-loss. Generally, people earning >50K contribute greater capital-gain than people earning <50K. </h4>
+</section>
+
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.0/topojson.min.js"></script>
+<script src="node_modules/datamaps/dist/datamaps.world.min.js"></script>
+<script type="text/javascript" src= "dc2.js"></script>
+<script type="text/javascript" src = "world_map.js"></script>
+<script type="text/javascript" src = "vis_2.js"></script>
+<script src="https://www.lactame.com/lib/ml/2.0.0/ml.min.js"></script>
+
+<div style="display:block;padding-top: 485px;"><h2 style="font-size:22px"><i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>Are they correlated ?</strong></i></h2></div>
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> Now further in analysis, let us see how various factors are related to each other by using Parallel coordinates visualisation technique. For this, all the nominal
+attributes have been mapped to the corresponding nominal attributes. Their mapped values can be seen by selecting the attribute from drop-down menu.<br>
+In this visualisation, you can move the Y-axis along X-coordinate (drag and drop) and can also select a set of values over the Y-axis using the cursor.
+</br></p>
+</div> 
+
+<br><br>
+<div style="display: block; padding-top:2%;">
+<center>
+
+<h4><br><strong> Select attribute </strong></h4>
+
+<select id="menu" style = "font-size:15px">  
+    <option value="occupation">occupation</option>
+    <option value="workclass">workclass</option> 
+    <option value="marital-status">marital-status</option>
+    <option value="relationship">relationship</option>
+    <option value="race">race</option>
+    <option value="sex">sex</option>
+    <option value="income">income</option>
+    <option value="education">education</option>    
+</select>
+</center>
+</div>
+<br><br>
+&nbsp&nbsp&nbsp&nbsp
+<div id = "parallel">
+<script type="text/javascript" src = "pc.js"></script>     
+</div> 
+
+
+<div id="sex" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Sex </H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD>1</TD>
+      <TD>Male</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD>0</TD>
+      <TD>Female</TD>
+   </TR>
+</TABLE>
+</div>
+
+<div id="income" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Income </H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 1 </TD>
+      <TD> >50K </TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 0 </TD>
+      <TD> <50K </TD>
+   </TR>
+</TABLE>
+</div>
+
+<div id="workclass" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Workclass </H3>
+      </TH>
+   </TR>
+   <TR >
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 0 </TD>
+      <TD>Federal gov</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Local gov</TD>
+      
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>Private </TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>Self-emp-inc</TD>
+      
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>Self-emp-not-inc</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 5 </TD>
+      <TD>State gov</TD>          
+   </TR>
+</TABLE>
+</div>
+
+<div id="marital-status" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Marital_status </H3>
+      </TH>
+   </TR>
+  <TR >
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 0 </TD>
+      <TD>Divorced</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Married-AF-Spouse</TD>
+   </TR>
+      
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>Married-civ-Spouse </TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>Married-Spouse-Absent</TD>
+   </TR> 
+     
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>Never Married</TD>
+   </TR>   
+   
+   <TR  ALIGN="CENTER"> 
+      <TD> 5 </TD>
+      <TD>Separated</TD>           
+   </TR>
+   
+    <TR  ALIGN="CENTER"> 
+      <TD> 6 </TD>
+      <TD> Widowed </TD>
+              
+   </TR>
+</TABLE>
+</div>
+
+<div id="relationship" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Relationship </H3>
+      </TH>
+   </TR>
+   <TR >
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 0 </TD>
+      <TD>Husband</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Not-in-Family</TD>
+    </TR>  
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>Other relative</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>Own child</TD>
+    </TR>   
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>UnMarried</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 5 </TD>
+      <TD>Wife</TD>         
+   </TR>
+</TABLE>
+</div>
+
+<div id="race" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Race </H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 0 </TD>
+      <TD>Amer-Indian-Eskimo</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Asian-Pac-Islander</TD>
+   </TR>   
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>Black</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>Other</TD>
+    </TR>     
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>White</TD>
+   </TR>
+</TABLE>
+</div>
+
+
+<div id="education" style=" display:none;">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Education </H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+     <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Pre-School</TD>
+      
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>1st-4th</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>5th-6th</TD>
+      
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>7th-8th</TD>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 5 </TD>
+      <TD>9th</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 6 </TD>
+      <TD>10th</TD>
+      
+   <TR ALIGN="CENTER">
+      <TD> 7 </TD>
+      <TD>11th</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 8 </TD>
+      <TD>12th</TD>
+      
+    <TR ALIGN="CENTER">
+      <TD> 9 </TD>
+      <TD>HS-Grad</TD>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 10 </TD>
+      <TD>Some-college</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 11 </TD>
+      <TD>Assoc-voc</TD>
+      
+   <TR ALIGN="CENTER">
+      <TD> 12 </TD>
+      <TD>Assoc-acdm</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 13 </TD>
+      <TD>Bachelors</TD>
+      
+    <TR ALIGN="CENTER">
+      <TD> 14 </TD>
+      <TD>Masters</TD>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 15 </TD>
+      <TD>Prof-School</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 16 </TD>
+      <TD>Doctorate</TD>
+   </TR> 
+   
+   
+</TABLE>
+</div>
+
+<div id="occupation">
+    <TABLE BORDER="5"    WIDTH="300px"   CELLPADDING="4" CELLSPACING="6">
+   <TR>
+      <TH COLSPAN="2"><BR><H3> Attribute - Occupation </H3>
+      </TH>
+   </TR>
+   <TR>
+      <TH>Mapped Value </TH>
+      <TH>Original value</TH>
+   </TR>
+   
+   <TR  ALIGN="CENTER"> 
+      <TD> 0 </TD>
+      <TD>Adm-Clerical</TD>
+   </TR>
+      
+   <TR  ALIGN="CENTER"> 
+      <TD> 1 </TD>
+      <TD>Armed-Forces</TD>
+   </TR>
+      
+   <TR ALIGN="CENTER">
+      <TD> 2 </TD>
+      <TD>Craft-Repair</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 3 </TD>
+      <TD>Exec-Managerial</TD>
+   </TR>   
+    <TR ALIGN="CENTER">
+      <TD> 4 </TD>
+      <TD>Farmer-Fishing</TD>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 5 </TD>
+      <TD>Handlers-cleaners</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 6 </TD>
+      <TD>Machine-op-inspct</TD>
+   </TR>     
+   <TR ALIGN="CENTER">
+      <TD> 7 </TD>
+      <TD>Other Service</TD>
+   </TR>   
+   <TR  ALIGN="CENTER"> 
+      <TD> 8 </TD>
+      <TD>Private-House-service</TD>
+   </TR>   
+    <TR ALIGN="CENTER">
+      <TD> 9 </TD>
+      <TD>Prof-Speciality</TD>
+   </TR>
+   
+   <TR ALIGN="CENTER">
+      <TD> 10 </TD>
+      <TD>Protective-service</TD>
+   </TR> 
+     
+   <TR  ALIGN="CENTER"> 
+      <TD> 11 </TD>
+      <TD>Sales</TD>
+  </TR>  
+    
+   <TR ALIGN="CENTER">
+      <TD> 12 </TD>
+      <TD>Tech Support</TD>
+   </TR>  
+    
+   <TR  ALIGN="CENTER"> 
+      <TD> 13 </TD>
+      <TD>Transport-Moving</TD>
+   </TR>
+</TABLE>
+</div>
+
+<script type="text/javascript">
+$('#menu').on('change', function () {
+    var selectedValue = $(this).val();
+    if(selectedValue === 'sex') { 
+        $('#sex').show(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').hide();                                       
+    }
+    else if (selectedValue === 'income') { 
+        $('#sex').hide(); 
+        $('#income').show();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'marital-status') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').show();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'education') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').show(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'workclass') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').show();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'race') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').show();
+        $('#relationship').hide();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'relationship') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').show();
+        $('#occupation').hide(); 
+    }
+    else if (selectedValue === 'occupation') { 
+        $('#sex').hide(); 
+        $('#income').hide();
+        $('#marital-status').hide();
+        $('#education').hide(); 
+        $('#workclass').hide();
+        $('#race').hide();
+        $('#relationship').hide();
+        $('#occupation').show(); 
+    }
+});
+</script>
+
+<br><br>
+
+<div>
+<section style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;">
+<h4>Correlation amongst various attributes : </h4>
+<ul>
+<li> On Dragging and Dropping the education attribute next to educational-num attribute, you can see that they are highly correlated. Intuitively, they both  are conveying the same information.</li>
+<li> All other attributes are not highly related to each other but when grouped together like when you see the sex, education and the marital-status of a person then they are having a great impact on the salary of a person. </li>
+</ul>
+</section>
+
+</div>
+
+<br><br><br><br>
+
+<h1 style="font-size:30px"><center>Analysis Evaluation</h2>  
+<br>
+<h2 style="font-size:22px"><i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>I. Using ML Classification Algorithms</strong></i><h2> 
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> After digging into the data and analysing how various factors can impact on the salary of an adult, lets apply some machine learning classification algorithms like KNN, SVM, Decision Trees, Random Forest and check how accurately they can predict the salary of a person given the parameters. ROC curve is plotted for each classifier and then their performance is compared based on the area lying under the curve and its accuracy score.
+</p>
+</div> 
+
+
+<br><br>
+<div style="display: block; padding-top:2%;">
+<form id="select-operation" style = "position: relative; left: 150px;">
+    <input type=radio name="operation" value="Accuracy" checked="true"><label style="font-size: 17px;">Accuracy</label>
+    <input type=radio name="operation" value="Area under Curve"><label style="font-size: 17px;">Area under Curve</label>
+  </form>
+</div>
+
+<div style = "padding-left:3%"> 
+<div id = "accarea">
+
+<script type="text/javascript" src = "acc.js"></script>
+</div>
+
+<div id = "roc">
+<script type="text/javascript" src = "roc.js"></script>
+</div>
+
+</div>
+<br><br>
+
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> It is evident that random forest performs best while classifying this dataset with 90% area under Roc curve and 85% accuracy. This shows that the factors like education,marital-status, sex, workclass etc. affects the salary of a person.</p>
+</div> 
+
+<br><br>
+<h2 style="font-size:22px"><i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<strong>II. Using Principal Component Analysis</strong></i><h2>  
+
+
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> Further in evaluation, lets perform principal component analysis on this dataset and reduce the dimensions dynamically. With this, you can check which group of parameters<br> are able to cluster the data into two parts - <50K and >50K. 
+Here 0 being <50K and 1 being >50K. 
+</br></p>
+</div> 
+
+<br><br>
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
+<div id = "pca"></div>
+
+&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+<div><h3>Features to Include in the PCA</h2>
+      <table>
+        <tr>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="age"  checked="true">&nbspage<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="workclass" checked="true">&nbspworkclass<br></td>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="fnlwgt">&nbspfnlwgt<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="educational-num">&nbspeducational-num<br></td>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="marital-status">&nbspmarital-status<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="occupation">&nbspoccupation<br></td>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="relationship">&nbsprelationship<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="race">&nbsprace<br></td>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="sex">&nbspsex<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="capital-gain">&nbspcapital-gain<br></td>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="capital-loss">&nbspcapital-loss<br></td>
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="hours-per-week">&nbsphours-per-week<br></td>
+        </tr>
+        </tr><tr> 
+          <td><input class="pcaDimensions" type="checkbox" onchange="draw_graphs(false)" value="origin">&nbsporigin<br></td>
+      </table>
+    </div>
+ 
+<br><br>  
+<div>
+<p style="font-family:Lucida Console; font-size:19px ; position: absolute; left: 100px;"> By selecting/deselecting features to be included in PCA, one can see that the persons education, sex, his marital status and occupation are the most influential factors that can impact his salary.Whereas number of hours worked/week, his age or his workclass are the least affecting ones.
+</p>
+</div>     
+<script type="text/javascript" src = "pca.js"></script>  
+<br><br><br> 
+</div> 
+</body>
+</html>
+                                                                                                                                                                                        

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create scatterplot </title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+
+    </head>
+    <style>
+        body { font: 12px Arial;}
+					
+		.toolTip {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: absolute;
+    display: none;
+    width: auto;
+    height: auto;
+    background: none repeat scroll 0 0 white;
+    border: 0 none;
+    border-radius: 8px 8px 8px 8px;
+    box-shadow: -3px 3px 15px #888888;
+    color: black;
+    font: 12px sans-serif;
+    padding: 5px;
+    text-align: center;
+              }
+
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+        
+        	var xcolumn = 'Male';
+        	
+        	var margin = {top: 20, right: 20, bottom: 30, left: 40},
+                width = 1000 - margin.left - margin.right,
+			    height = 600;
+            var svg  = d3.select("body")
+            			 .append("svg")
+			             .attr("width", width + margin.left + margin.right)
+   						 .attr("height", height + margin.top + margin.bottom)
+    		var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    		
+    		var divTooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+			var x0 = d3.scaleBand()
+    				   .rangeRound([0, width])
+				       .paddingInner(0.1);
+
+			var x1 = d3.scaleBand()
+    			       .padding(0.05);
+
+			var y = d3.scaleLinear()
+    				  .rangeRound([height, 0]);
+
+			var z = d3.scaleOrdinal(d3.schemeCategory10);
+	    				  //.range([ "#0CC4E1", "#0CE15A","#EDD459","#98abc5"]);
+
+			d3.csv("../../CSV Files/Male.csv" + "?", function(d, i, columns) 
+			{
+  				for (var i = 1, n = columns.length; i < n; ++i) d[columns[i]] = +d[columns[i]];
+  				return d;
+			}, 
+			function(error, data)
+			{
+			  if (error) throw error;
+
+			  var keys = data.columns.slice(14);
+			 	 
+			  x0.domain(data.map(function(d) { return d[xcolumn]; }));
+  			  x1.domain(keys).rangeRound([0, x0.bandwidth()]);
+			  y.domain([0, d3.max(data, function(d) { return d3.max(keys, function(key) { return d[key];}); })]).nice();
+			  
+  			  g.append("g")
+		       .selectAll("g")
+		       .data(data)
+    		   .enter().append("g")
+      		   .attr("transform", function(d) { return "translate(" + x0(d[xcolumn]) + ",0)"; })
+    		   .selectAll("rect")
+		       .data(function(d) { return keys.map(function(key) { return {key: key, value: d[key]}; }); })
+		       .enter().append("rect")
+		       .attr("x", function(d) { return x1(d.key); })
+		       .attr("y", function(d) { return y(d.value); })
+     		   .attr("width", x1.bandwidth())
+		       .attr("height", function(d) { return height - y(d.value); })
+		       .attr("fill", function(d) { return z(d.key); })
+		       .on("mousemove", function(d){
+       		   divTooltip.style("left", d3.event.pageX+10+"px");
+	           divTooltip.style("top", d3.event.pageY-25+"px");
+       		   divTooltip.style("display", "inline-block");
+	           var x = d3.event.pageX, y = d3.event.pageY
+      		   var elements = document.querySelectorAll(':hover');
+               l = elements.length
+               l = l-1
+               elementData = elements[l].__data__
+               divTooltip.html((d.key)+"<br>"+elementData.value);
+    })
+    .on("mouseout", function(d){
+        divTooltip.style("display", "none");
+    });
+		       
+  			  g.append("g")
+		       .attr("class", "axis")
+		       .attr("transform", "translate(0," + height + ")")
+		       .call(d3.axisBottom(x0))
+
+			  g.append("g")
+      		   .attr("class", "axis")
+		       .call(d3.axisLeft(y).ticks(null, "s"))
+		       .append("text")
+		       .attr("x", 2)
+		       .attr("y", y(y.ticks().pop()) + 0.5)
+		       .attr("dy", "0.32em")
+		       .attr("fill", "#000")
+		       .attr("font-weight", "bold")
+		       .attr("text-anchor", "start")
+		       .text("Number of people");
+		       
+		       g.append("text")
+     		    .attr("transform", "translate(310,625)")
+      	 //.attr("dy", ".71em")
+      	 		.text("Age group of " + xcolumn)
+      	 		.attr("font-weight", "bold")
+      	 		.attr("text-anchor", "start")
+      	 		.attr("font", " 10px Arial");
+
+  			  var legend = g.append("g")
+					        .attr("font-family", "sans-serif")
+				            .attr("font-size", 10)
+	   				        .attr("text-anchor", "end")
+  						    .selectAll("g")
+						    .data(keys.slice().reverse())
+						    .enter().append("g")
+      						.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  			  legend.append("rect")
+			        .attr("x", width - 19)
+			        .attr("width", 19)
+			        .attr("height", 19)
+			        .attr("fill", z);
+
+  			  legend.append("text")
+			        .attr("x", width - 24)
+			        .attr("y", 9.5)
+			        .attr("dy", "0.32em")
+      				.text(function(d) { return d; });
+});
+        	
+        	
+        
+		</script>
+    </body>
+</html>

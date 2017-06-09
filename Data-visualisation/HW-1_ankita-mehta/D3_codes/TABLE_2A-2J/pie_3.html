@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create scatterplot </title>
+        <script src="//d3js.org/d3.v4.min.js"></script>
+
+    </head>
+    <style>
+        body { font: 12px Arial;}
+					
+		.arc text {
+  			font: 10px sans-serif;
+			text-anchor: middle;
+                  }
+
+		.arc path {stroke: #fff;}
+		
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+
+		var width = 960,
+    		height = 550,
+    		radius = Math.min(width, height) / 2;
+
+		var ycolumn = 'Months worked';
+		var xcolumn = 'Highest level completed';
+		var color = d3.scaleOrdinal().range(["#E10C0C", "#D60CE1", "#0CC4E1", "#0CE15A","#EDD459"]);
+   		   	    
+		var arc = d3.arc()
+   				    .outerRadius(radius - 10)
+    				.innerRadius(0);
+
+		var labelArc = d3.arc()
+    					 .outerRadius(radius - 40)
+    					 .innerRadius(radius - 40);
+
+		var pie = d3.pie()
+    				.sort(null)
+    				.value(function(d) { return d[ycolumn]; });
+
+		var svg = d3.select("body").append("svg")
+    				.attr("width", width)
+    				.attr("height", height)
+  					.append("g")
+   		    		.attr("transform", "translate(" + (width / 2 - 100  )+ "," + (height / 2 - 10 ) + ")");
+
+d3.csv("../../CSV Files/2j.csv" + "?", function(error, data) 
+ {
+	data.forEach(function(d) 
+   		{
+               d[ycolumn] = +d[ycolumn];
+   		});   
+
+  var g = svg.selectAll(".arc")
+      		 .data(pie(data))
+    		 .enter().append("g")
+      		 .attr("class", "arc");
+
+
+ 	 g.append("path")
+    	  .attr("d", arc)
+      	  .style("fill", function(d, i) {return color(i)});
+
+  	 g.append("text")
+     	 .attr("transform", function(d) { return "translate(" + labelArc.centroid(d) + ")"; })
+     	 .attr("dx","-0em")
+      	 .attr("dy", "-1em")
+      	 .text(function(d) { return d.data[xcolumn]; });
+      	 
+     g.append("text")
+     	 .attr("transform", "translate(10,280)")
+      	 //.attr("dy", ".71em")
+      	 .text( "Total number of " + ycolumn + " in various education levels ")
+      	 .attr("font-weight", "bold")
+      	 .attr("text-anchor", "start")
+      	 .attr("font", " 10px Arial");
+     
+      
+      
+        	   	 	 
+});
+
+        	
+        	
+        
+		</script>
+    </body>
+</html>

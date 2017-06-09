@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create donout chart </title>
+        <script src="//d3js.org/d3.v3.min.js"></script>
+
+    </head>
+    <style>
+       .arc text {
+  font: 10px sans-serif;
+  text-anchor: middle;
+}
+
+.arc path {
+  stroke: #fff;
+}
+
+		
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+        
+        var width = 960, height = 550,
+            radius = Math.min(width, height) / 2;
+    
+   		var xcolumn = 'Female';
+    	var ycolumn = 'Total';
+
+		var color = d3.scale.category10();
+
+		var arc = d3.svg.arc()
+    				.outerRadius(radius - 100)
+				    .innerRadius(radius - 15);
+
+		var pie = d3.layout.pie()
+    				.sort(null)
+    				.value(function(d) { return d[ycolumn]; });
+
+		var svg = d3.select("body").append("svg")
+    				.attr("width", width)
+				    .attr("height", height)
+				    .append("g")
+				    .attr("transform", "translate(" + (width / 2 - 100) + "," + (height / 2 - 10) + ")");
+
+		d3.csv("../../CSV Files/Female.csv" + "?", function(error, data) {
+  					data.forEach(function(d) {
+               		d[ycolumn] = +d[ycolumn];
+   				});
+
+  		var g = svg.selectAll(".arc")
+     			   .data(pie(data))
+			       .enter().append("g")
+			       .attr("class", "arc");
+
+  			g.append("path")
+      		 .attr("d", arc)
+      		 .attr("fill", function(d, i) { return color(i); })
+
+		    g.append("text")
+	     	 .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+    	 	 .attr("dx","-0em")
+      		 .attr("dy", "-1em")
+      	 	.text(function(d) { return d.data[xcolumn]; });
+      	 
+		    g.append("text")
+	     	 .attr("transform", "translate(10,280)")
+      	 	 .text( "Total number of " + xcolumn + " in particular age groups ")
+         	 .attr("font-weight", "bold")
+        	 .attr("text-anchor", "start")
+        	 .attr("font", " 10px Arial");
+});
+
+		</script>
+    </body>
+</html>

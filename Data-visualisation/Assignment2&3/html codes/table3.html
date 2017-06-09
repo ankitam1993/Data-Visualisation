@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>dc.js - Ordinal Bar Chart Example</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.css"/>
+</head>
+<body>
+
+<div class="container">
+
+<h5><center><u><i> Facebook Dataset Visualisations</u></i></h5>
+<button type="button" id="click_me" value="Prev_page">prev</button> 
+<p><center><italics>Below table is showing the performance of one post against another which is calculated by No of Engaged users / No of Reached Users</p>
+  <table id="test">
+        <thead>
+            <tr>
+             <th>category</th>
+             <th>Type</th>
+              <th>Engaged</th>
+              <th>Reached</th>
+              <th>Performance(engaged/reached)</th>
+            </tr>
+        </thead>
+   </table>
+ <div id="paging">
+    Showing <span id="begin"></span>-<span id="end"></span> of <span id="size"></span>.
+    <input id="last" class="btn" type="Button" value="Last" onclick="javascript:last()" />
+    <input id="next" class="btn" type="button" value="Next" onclick="javascript:next()"/>
+  </div>  
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.js"></script>
+<script type="text/javascript">
+
+  var column1 = 'Category'
+  var column1a = 'Type'
+  var column2 = 'Lifetime Engaged Users'
+  var column3 = 'Lifetime Post Total Reach'
+  
+  var table = dc.dataTable("#test");
+  var ndx;
+// load data from a csv file
+d3.csv('facebook_output.csv', function (data) {
+  
+  data.forEach(function(d) {
+    d[column1] = +d[column1]; 
+    d[column2] = +d[column2];
+    d[column3] = +d[column3];
+}); 
+  ndx = crossfilter(data),
+tDim = ndx.dimension(function(d) {return d[column1];});
+
+
+table
+    .dimension(tDim)
+    .group(function(d) {
+        return d.value;
+    })
+    .showGroups(false)
+    .size(Infinity)
+    .columns([column1,column1a,column2,
+              column3,
+              {
+                  label: 'performance',
+                  format: function(d) {
+                      return Math.floor((d[column2] / d[column3]) * 100) + '%';
+                  }
+              }])
+    .sortBy(function (d) { return Math.floor((d[column2] / d[column3]) * 100); });
+    //.order(d3.ascending);;
+      
+ update();             
+table.render();
+
+d3.select('#click_me').on('click',function() {
+    window.location.href = 'final_facebook.html';
+    return false;
+});
+  
+});
+
+var ofs = 0, pag = 10;
+  function display() {
+      d3.select('#begin')
+          .text(ofs);
+      d3.select('#end')
+          .text(ofs+pag-1);
+      d3.select('#last')
+          .attr('disabled', ofs-pag<0 ? 'true' : null);
+      d3.select('#next')
+          .attr('disabled', ofs+pag>=ndx.size() ? 'true' : null);
+      d3.select('#size').text(ndx.size());
+  }
+  function update() {
+      table.beginSlice(ofs);
+      table.endSlice(ofs+pag);
+      display();
+  }
+  function next() {
+      ofs += pag;
+      update();
+      table.redraw();
+  }
+  function last() {
+      ofs -= pag;
+      update();
+      table.redraw();
+  }
+  
+</script>
+
+</div>
+</body>
+</html>

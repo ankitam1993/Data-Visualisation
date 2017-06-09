@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create bar with tooltip </title>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+    </head>
+    <style>
+        body { font: 12px Arial;}
+					
+		.bar {
+  		fill: teal;
+		}
+
+		.bar:hover {
+  		fill: orangered ;
+		}
+
+		.axis path,
+		.axis line {
+  		fill: black;
+  		stroke: #000;
+  		shape-rendering: crispEdges;
+		}
+		
+		.axis--x line
+
+		.d3-tip {
+  		line-height: 1;
+  		font-weight: bold;
+  		padding: 12px;
+  		background: rgba(0, 0, 0, 0.8);
+  		color: #fff;
+		border-radius: 2px;
+		}
+
+		/* Creates a small triangle extender for the tooltip */
+		.d3-tip:after {
+  		box-sizing: border-box;
+  		display: inline;
+  		font-size: 10px;
+  		width: 100%;
+  		line-height: 1;
+  		color: rgba(0, 0, 0, 0.8);
+  		content: "\25BC";
+  		position: absolute;
+  		text-align: center;
+		}
+
+		/* Style northward tooltips differently */
+		.d3-tip.n:after {
+  		margin: -1px 0 0 0;
+  		top: 100%;
+  		left: 0;
+		}
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+            
+            var margin = {top: 40, right: 20, bottom: 30, left: 40},
+    			width = 960 - margin.left - margin.right,
+			    height = 550 - margin.top - margin.bottom;
+
+			var xcolumn = 'Highest level completed';
+            var ycolumn = 'Number of people';
+
+			var x = d3.scale.ordinal()
+				      .rangeRoundBands([0, width], .4);
+
+			var y = d3.scale.linear()
+				      .range([height, 0]);
+
+			var xAxis = d3.svg.axis()
+    					  .scale(x)
+    				      .orient("bottom");
+
+			var yAxis = d3.svg.axis()
+					      .scale(y)
+					      .orient("right")
+    					  .ticks(5);
+	
+			var tip = d3.tip()
+ 					    .attr('class', 'd3-tip')
+  						.offset([-10, 0])
+ 					    .html(function(d) {
+  						  return "<strong>Number of People:</strong> <span style='color:red'>" + d[ycolumn] + "</span>";
+  							})
+
+			var svg = d3.select("body").append("svg")
+					    .attr("width", width + margin.left + margin.right + 30)
+					    .attr("height", height + margin.top + margin.bottom+75)
+					    .append("g")
+					    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			svg.call(tip);
+
+			d3.csv("../../CSV Files/2a.csv",function(error, data) {
+
+			 data.forEach(function(d) 
+   				 {
+               		d[ycolumn] = +d[ycolumn];
+   				  });
+			  x.domain(data.map(function(d) { return d[xcolumn]; }));
+			  y.domain([0, d3.max(data, function(d) { return d[ycolumn]; })]);
+
+		    svg.append("g")
+      			   .attr("transform", "translate(0," + height + ")")
+			       .call(xAxis)
+			       .selectAll("text")
+		           .style("text-anchor","end")
+    		       .attr("transform",function(d){ return "rotate(-30)"});
+
+
+		    svg.append("g")
+		       .attr("class", "y axis")
+		       .call(yAxis)
+		       .append("text")
+      		   .attr("transform", "rotate(0)")
+      		   .attr("y", -10)
+        	   .attr("dy", ".71em")
+      		   .style("text-anchor", "top")
+      		   .text(ycolumn);
+
+  			svg.selectAll(".bar")
+     		   .data(data)
+    		   .enter().append("rect")
+   			   .attr("class", "bar")
+	           .attr("x", function(d) { return x(d[xcolumn]); })
+		       .attr("width", x.rangeBand())
+		       .attr("y", function(d) { return y(d[ycolumn]); })
+		       .attr("height", function(d) { return height - y(d[ycolumn]); })
+		       .on('mouseover', tip.show)
+		       .on('mouseout', tip.hide)
+		       
+		    svg.append("text")
+     		    .attr("transform", "translate(200,580)")
+      	 //.attr("dy", ".71em")
+      	 		.text(ycolumn + " in various education levels" )
+      	 		.attr("font-weight", "bold")
+      	 		.attr("text-anchor", "start")
+      	 		.attr("font", " 15px Arial");
+
+			svg.append("text")
+       		      .attr("x", (width / 2) + 20)             
+        	      .attr("y", -5)
+        	      .attr("text-anchor", "middle")  
+        	      .style("font-size", "16px") 
+        	      .style("text-decoration", "underline")  
+        	      .text(xcolumn + " vs " + ycolumn);
+
+});
+
+</script>
+    </body>
+</html>

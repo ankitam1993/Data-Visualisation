@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Using SVG to create scatterplot </title>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+    </head>
+    <style>
+        body { font: 12px Arial;}
+        	
+        path { 
+    		stroke-width: 2;
+    		fill: none;
+			}
+        .axis path,
+		.axis line {
+    			fill: none;
+    			stroke: black;
+    			stroke-width: 2;
+    			shape-rendering: crispEdges;
+					}
+					
+		.tooltip {
+ 				 position: absolute;
+				 width: 200px;
+			     height: 28px;
+                 pointer-events: none;
+                 }
+    </style>
+        
+    <body>
+        <script type="text/javascript">
+            
+            var w = 700;
+            var h = 600;
+            var rMin = 4;
+            var rMax = 14;
+            
+            var xcolumn = 'Number of people'
+            var ycolumn = 'Earnings (FT)'
+            var  colorColumn = "File";
+            
+            var svg  = d3.select("body")
+            			 .append("svg")
+			             .attr("width", w+200)
+            			 .attr("height" ,h+200);
+			
+			var xvalue = function(d) { return d[xcolumn];};
+			var yvalue = function(d) { return d[ycolumn];};
+			var rscale = d3.scale.log().range([rMin,rMax])
+			
+			var xscale = d3.scale.linear().range([55,w-40 ]);
+			var yscale = d3.scale.linear().range([h-18, 30]);
+			var cValue = function(d) { return d[colorColumn];},
+   		   	    color = d3.scale.category10();
+			
+			var xAxis  = d3.svg.axis()
+              				   .scale(xscale)
+              				   .orient("bottom")
+              				   .ticks(5);
+              			
+            var yAxis  = d3.svg.axis()
+              				   .scale(yscale)
+              				   .orient("left")
+              				   .ticks(5);
+							      
+			var tooltip = d3.select("body").append("div")
+    						.attr("class", "tooltip")
+						    .style("opacity", 0);
+            
+            d3.csv("../../CSV Files/2a+2j.csv", function(error, data) {
+   				 data.forEach(function(d) 
+   				 {
+        		 	d[xcolumn] = +d[xcolumn];
+               		d[ycolumn] = +d[ycolumn];
+   				  });
+   				  
+			xscale.domain([0,d3.max(data, xvalue)]);
+    		yscale.domain([0,d3.max(data, yvalue)]);
+    		rscale.domain(d3.extent(data, function(d) { return d['Months worked']; }));
+    		
+    		
+    		var circles = svg.selectAll("circle")
+            				 .data(data)
+            				 .enter()
+            				 .append("circle")
+            				 .on("mouseover", function(d) {
+        						  tooltip.transition()
+						          	     .duration(200)
+						                 .style("opacity", .9);
+						          tooltip.html(d['Highest level completed'] + "<br/> (" + xvalue(d)
+												        + ", " + yvalue(d)  + ")")
+               							 .style("left", (d3.event.pageX + 10) + "px")
+						                 .style("top", (d3.event.pageY - 30) + "px");
+      							})
+      						 .on("mouseout", function(d) {
+						          tooltip.transition()
+						                 .duration(500)
+						                 .style("opacity", 0);
+						        });
+    		circles.attr
+    		({
+    		
+    		 		cx:function(d){ return xscale(d[xcolumn]);},
+    		 		cy:function(d){ return yscale(d[ycolumn]);},
+					r: function(d){ return rscale(d['Months worked']);},
+    		 		//fill: "red",
+    		 		fill :function (d)
+    		 		{ 
+    		 			return color(cValue(d));  
+    		 		}
+    		 		
+    		});
+        	   
+        	svg.append("text")
+       		   .attr("x", (w / 2))             
+        	   .attr("y", 20)
+        	   .attr("text-anchor", "middle")  
+        	   .style("font-size", "16px") 
+        	   .style("text-decoration", "underline")  
+        	   .text(xcolumn + " vs " + ycolumn);
+        	   
+        	svg.append("text")
+       		   .attr("x", w-350)             
+        	   .attr("y", h+40)
+        	   .attr("text-anchor", "middle")  
+        	   .style("font-size", "16px") 
+        	   .text("This figure illustrates that the mean values are always larger than the median values");
+        	
+        	svg.append("text")
+       		   .attr("x", w-345)             
+        	   .attr("y", h+60)
+        	   .attr("text-anchor", "middle")  
+        	   .style("font-size", "16px") 
+        	   .text("since there are a number of large " + ycolumn + " that make it larger.");
+        	   
+             // x-axis  
+            svg.append("g")
+      		   .attr("class", "x axis")
+		       .attr("transform", "translate(8," + (h-23) + ")")
+      		   .call(xAxis)
+		       .append("text")
+               .attr("class", "label")
+               .attr("x", w-20)
+               .attr("y", -6)
+               .style("text-anchor", "end")
+               .text(xcolumn);
+
+  			// y-axis
+  			svg.append("g")
+      		   .attr("class", "y axis")
+      		   .attr("transform", "translate(" + 63 + ",-5)")
+      		   .call(yAxis)
+    		   .append("text")
+      		   .attr("class", "label")
+      		   .attr("y", 18)
+      		   .attr("dy", ".61em")
+      		   .style("text-anchor", "middle")
+      		   .text(ycolumn);
+      		   
+      		 
+      		var legend = svg.selectAll(".legend")
+      						.data(color.domain())
+						    .enter().append("g")
+					        .attr("class", "legend")
+					        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+			// draw legend colored rectangles
+			legend.append("rect")
+			      .attr("x", w - 18)
+			      .attr("width", 18)
+			      .attr("height", 18)
+			      .style("fill", color);
+
+			  // draw legend text
+			legend.append("text")
+			      .attr("x", w - 24)
+			      .attr("y", 9)
+			      .attr("dy", ".35em")
+			      .style("text-anchor", "end")
+     			  .text(function(d) { return d;})
+
+        	});
+        	
+        	
+        	
+        
+		</script>
+    </body>
+</html>

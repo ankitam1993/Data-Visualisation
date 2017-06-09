@@ -1,0 +1,444 @@
+<html lang="en">
+<head>
+    <title>dc.js - Ordinal Bar Chart Example</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.css"/>
+    
+    <style type="text/css"> 
+      h4 span {
+      font-size:14px;
+      font-weight:normal;
+      }
+      
+.colorbar .axis line{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+		}
+
+.colorbar .axis .domain{
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+		}
+
+</style>      
+</head>
+<body>
+
+<div class="container">
+
+<h5><center><u><i> Red Wine Dataset Visualisation</u></i></h5>
+<button type="button" id="click_me2" value="Prev_page">prev</button> 
+<p><center><italics>Four Different Plots have been explored for this data set viz scatter-plot, Histogram, Line and Bar charts.</p>
+
+  <p>You can change X and Y axis from the options given and play with the charts.</p>
+  
+<h5>&nbsp&nbsp&nbspSelect X axis &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp Select Y axis </h5>
+<select id="select-operation_x">
+    <option value="chlorides">chlorides</option>
+	<option value="quality">quality </option>  
+	<option value="fixed acidity">fixed acidity</option>
+    <option value="volatile acidity">volatile acidity</option>
+    <option value="citric acid">citric acid</option>
+    <option value="residual sugar">residual sugar</option>
+    <option value="free sulfur dioxide">free sulfur dioxide</option>
+    <option value="total sulfur dioxide">total sulfur dioxide</option>
+    <option value="density">density</option>
+    <option value="pH">pH</option>
+    <option value="sulphates">sulphates</option>
+    <option value="alcohol">alcohol</option>                           
+</select>
+<select id="select-operation_y">
+    <option value="fixed acidity">fixed acidity</option>
+   <option value="quality">quality </option>
+    <option value="volatile acidity">volatile acidity</option>
+    <option value="citric acid">citric acid</option>
+    <option value="residual sugar">residual sugar</option>
+    <option value="chlorides">chlorides</option>
+    <option value="free sulfur dioxide">free sulfur dioxide</option>
+    <option value="total sulfur dioxide">total sulfur dioxide</option>
+    <option value="density">density</option>
+    <option value="pH">pH</option>
+    <option value="sulphates">sulphates</option>
+    <option value="alcohol">alcohol</option>                           
+</select>           
+<br><br>
+    
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0/dc.min.js"></script>
+    
+<div id="scat"> <h5>Relation b/w chemical properties of red wine</h5>
+     <span> <a class="reset"  href="javascript:chart.filterAll();dc.redrawAll();" style="display: none;"> reset</a>
+    </span>
+  </div>
+   
+<div id = "line"><h5>Aggregation of one chemical property over other <br>for various quality values</h5>
+    <span>
+          <a class="reset"
+            href="javascript:lchart.filterAll();dc.redrawAll();"
+            style="display: none;">
+            reset
+          </a>
+    </span>
+   </div>  
+
+<div id="bc"> <h5>Distribution of chemical properties of red wine </h5>
+     <span> <a class="reset"  href="javascript:bchart.filterAll();dc.redrawAll();" style="display: none;"> reset</a>
+    </span>
+  </div>   
+
+<div id = "pie">
+        <h5>Percentage of samples in various Quality values</h5><span>
+          <a class="reset"
+            href="javascript:pchart.filterAll();dc.redrawAll();"
+            style="display: none;">
+            reset
+          </a></span>
+</div>
+<script type="text/javascript">
+
+      chart = dc.seriesChart('#scat'),
+      lchart = dc.seriesChart("#line");
+      bchart = dc.barChart('#bc');
+      pchart = dc.pieChart('#pie');
+  var xcolumn = 'chlorides'
+  var ycolumn = 'fixed acidity'
+  var ccolumn = 'quality'
+  
+
+  d3.csv('winequality-red.csv', function(error, data) { 
+  
+data.forEach(function(d) { d[ycolumn] = +d[ycolumn]; 
+                            d[xcolumn] = +d[xcolumn];}); 
+                            
+              if(error)
+          throw new Error(error);
+          
+          ndx            = crossfilter(data),
+           scDimension   = ndx.dimension(function(d) {return [d[ccolumn], +d[xcolumn],+d[ycolumn]];}),
+           scGroup 		 = scDimension.group();
+        
+        var domain = data.map(function (d) {return +d[xcolumn]; });	
+		
+		minimum = d3.min(domain);
+		maximum = d3.max(domain);   
+		
+		var symbolScale = d3.scale.ordinal().range(d3.svg.symbolTypes);
+  		var symbolAccessor = function(d) { return symbolScale(d.key[0]); };
+  
+      var subChart = function(c) {
+    return dc.scatterPlot(c)
+       .symbol(symbolAccessor)
+        .symbolSize(8)
+        .highlightedSize(10)
+  		};
+  		      
+  chart
+    .width(500)
+    .height(350)
+    .chart(subChart)
+    .x(d3.scale.linear().domain([minimum,maximum]))
+    .brushOn(false)
+    .yAxisLabel(ycolumn)
+    .xAxisLabel(xcolumn)
+    .clipPadding(10)
+    .elasticY(true)
+    .dimension(scDimension)
+    .group(scGroup)
+    .mouseZoomable(false)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.key[2] ;})
+    .shareTitle(true) // allow default scatter title to work
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.key[2];})
+    .legend(dc.legend().x(350).y(20).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  chart.yAxis().tickFormat(d3.format('.2s'));        		
+  //chart.margins().left += 40;
+  
+  
+  		   lcDimension        = ndx.dimension(function(d){return [d[ccolumn], +d[xcolumn]];}),
+           lcGroup 		 = lcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+           
+           var dom2 = data.map(function (d) {return +d[xcolumn]; });	
+		
+		minimum2 = d3.min(dom2);
+		maximum2 = d3.max(dom2);   
+		
+		var domy = data.map(function (d) {return +d[ycolumn]; });	
+		
+		minimumy = d3.min(domy);
+        maximumy = lcGroup.top(Infinity)[0].value;
+        
+      lchart
+    .width(500)
+    .height(350)
+    .chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
+    .x(d3.scale.linear().domain([minimum2,maximum2]))
+    .y(d3.scale.linear().domain([minimumy,maximumy]))
+    .brushOn(false)
+    .yAxisLabel(ycolumn)
+    .xAxisLabel(xcolumn)
+    .clipPadding(10)
+    //.elasticY(true)
+    .dimension(lcDimension)
+    .group(lcGroup)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.value ;})
+    .mouseZoomable(false)
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.value;})
+    .legend(dc.legend().x(350).y(10).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  lchart.yAxis().tickFormat(d3.format(".2s"));
+  
+   
+   
+   bcDimension        = ndx.dimension(function(d){return d[xcolumn];}),
+           bcGroup 		 = bcDimension.group().reduceCount();
+        
+        
+   		var stride = Math.ceil(dom2.length / 5);     
+   var ticks = dom2.filter(function(v, i) { return i % stride === 0; });
+        
+   bchart
+            .width(500)
+            .height(350)
+            .dimension(bcDimension)
+            .group(bcGroup)
+            .transitionDuration(500)
+            .centerBar(false)
+            .title(function(d) {
+        	return xcolumn +  ": "  + d.key + "\n" +
+               "Sum: " +  +d.value ;})
+            .x(d3.scale.ordinal())
+            .xAxisLabel(xcolumn)
+            .yAxisLabel('Distribution')
+           .xUnits(dc.units.ordinal)
+            .elasticY(true)
+            .elasticX(false)
+            .xAxis();
+            bchart.xAxis().tickValues(ticks);
+            //bchart.xAxis().tickvalues(ticks);
+            
+            //bchart.ordering(function(d) { return d[xcolumn]; });
+    		bchart.yAxis().tickFormat(d3.format('.2s'));        		
+      		
+     
+     pDimension =  ndx.dimension(function(d){return d[ccolumn];})
+     pGroup = pDimension.group().reduceCount();
+       
+     pchart
+          .width(400)
+          .height(510)
+          .slicesCap(20)
+          .innerRadius(60)
+          .externalLabels(50)
+          .externalRadiusPadding(50)
+          .drawPaths(true)
+          .dimension(pDimension)
+          .group(pGroup)
+          .colors(d3.scale.category10())
+          .legend(dc.legend());
+          
+          pchart.on('pretransition', function(pchart) {
+          pchart.selectAll('text.pie-slice')
+             //.text('')
+            //.append('tspan')
+              .text(function(d) { return d.name; })
+            .append('tspan')
+              //.attr('x', 60)
+              .attr('text-anchor', 'end')
+              .text( function(d){ return Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';} )}); 			
+    	
+    dc.renderAll();
+    
+    
+    
+    
+    function chart_redraw(xcolumn , ycolumn, ccolumn)
+    {
+    	ndx            = crossfilter(data),
+    	scDimension   = ndx.dimension(function(d) {return [d[ccolumn], +d[xcolumn],+d[ycolumn]];}),
+           scGroup 		 = scDimension.group();
+        
+        var domain = data.map(function (d) {return +d[xcolumn]; });	
+		
+		minimum = d3.min(domain);
+		maximum = d3.max(domain);   
+		
+		
+		var symbolScale = d3.scale.ordinal().range(d3.svg.symbolTypes);
+  		var symbolAccessor = function(d) { return symbolScale(d.key[0]); };
+  
+      var subChart = function(c) {
+    return dc.scatterPlot(c)
+       .symbol(symbolAccessor)
+        .symbolSize(8)
+        .highlightedSize(10)
+  		};
+  		
+      		     
+  chart
+    .width(500)
+    .height(350)
+    .chart(subChart)
+    .x(d3.scale.linear().domain([minimum,maximum]))
+    .brushOn(false)
+    .yAxisLabel(ycolumn)
+    .xAxisLabel(xcolumn)
+    .clipPadding(10)
+    .elasticY(true)
+    .dimension(scDimension)
+    .group(scGroup)
+    .mouseZoomable(false)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.key[2] ;})
+    .shareTitle(true) // allow default scatter title to work
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.key[2];})
+    .legend(dc.legend().x(350).y(20).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+  chart.yAxis().tickFormat(d3.format('.2s'));        		
+  //chart.margins().left += 40;
+  
+  
+  		   lcDimension        = ndx.dimension(function(d){return [d[ccolumn], +d[xcolumn]];}),
+           lcGroup 		 = lcDimension.group().reduceSum(function(d) { return +d[ycolumn]; });
+           
+           var dom2 = data.map(function (d) {return +d[xcolumn]; });	
+		
+		minimum2 = d3.min(dom2);
+		maximum2 = d3.max(dom2);  
+		
+		var domy = data.map(function (d) {return +d[ycolumn]; });	
+		
+		minimumy = d3.min(domy);
+        maximumy = lcGroup.top(Infinity)[0].value;
+        
+      lchart
+    .width(500)
+    .height(350)
+    .chart(function(c) { return dc.lineChart(c).interpolate('basis'); })
+    .x(d3.scale.linear().domain([minimum2,maximum2]))
+    .y(d3.scale.linear().domain([minimumy,maximumy]))
+    .brushOn(false)
+    .yAxisLabel(ycolumn)
+    .xAxisLabel(xcolumn)
+    .clipPadding(10)
+    //.elasticY(true)
+    .dimension(lcDimension)
+    .group(lcGroup)
+    .title(function(d) {
+        	return xcolumn +  ": "  + d.key[1] + "\n" +
+               ycolumn + ": " + d.value ;})
+    .mouseZoomable(false)
+    .seriesAccessor(function(d) {return d.key[0];})
+    .keyAccessor(function(d) {return +d.key[1];})
+    .valueAccessor(function(d) {return +d.value;})
+    .legend(dc.legend().x(350).y(10).itemHeight(13).gap(5).horizontal(1).legendWidth(140).itemWidth(70));
+    lchart.yAxis().tickFormat(d3.format(".2s"));
+  
+   
+   
+   bcDimension        = ndx.dimension(function(d){return d[xcolumn];}),
+           bcGroup 		 = bcDimension.group().reduceCount();//(function(d) { return +d[ycolumn]; });
+        
+        var stride = Math.ceil(dom2.length / 5);     
+   var ticks = dom2.filter(function(v, i) { return i % stride === 0; });
+        
+   bchart
+            .width(500)
+            .height(350)
+            .dimension(bcDimension)
+            .group(bcGroup)
+            .transitionDuration(500)
+            .centerBar(false)
+            .title(function(d) {
+        	return xcolumn +  ": "  + d.key + "\n" +
+               "Sum: " +  +d.value ;})
+            .x(d3.scale.ordinal())//.domain(names))
+            .xAxisLabel(xcolumn)
+            .yAxisLabel('Distribution')
+            .xUnits(dc.units.ordinal)
+            .elasticY(true)
+            .xAxis().tickFormat();
+            bchart.xAxis().tickValues(ticks);
+            bchart.ordering(function(d) { return d[xcolumn]; });
+    		bchart.yAxis().tickFormat(d3.format('.2s'));        	
+      		
+     
+     pDimension =  ndx.dimension(function(d){return d[ccolumn];})
+     pGroup = pDimension.group().reduceCount();
+       
+     pchart
+          .width(400)
+          .height(510)
+          .slicesCap(20)
+          .innerRadius(60)
+          .externalLabels(50)
+          .externalRadiusPadding(50)
+          .drawPaths(true)
+          .dimension(pDimension)
+          .group(pGroup)
+          .colors(d3.scale.category10())
+          .legend(dc.legend());
+          
+          pchart.on('pretransition', function(pchart) {
+          pchart.selectAll('text.pie-slice')
+             //.text('')
+            //.append('tspan')
+              .text(function(d) { return d.name; })
+            .append('tspan')
+              //.attr('x', 60)
+              .attr('text-anchor', 'end')
+              .text( function(d){ return Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';} )}); 
+    
+    }
+    
+    select = d3.select('#select-operation_x').on('change',function() {
+    		xcolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,ccolumn);
+    		    dc.redrawAll();
+    });
+    
+    select = d3.select('#select-operation_y').on('change',function() {
+    		ycolumn = d3.select(this).property('value');
+    		chart_redraw(xcolumn,ycolumn,ccolumn);
+    			    dc.redrawAll();
+    });
+    
+    d3.select('#click_me2').on('click',function() {
+    window.location.href = 'index.html';
+    return false;
+});
+
+});
+    
+</script>
+
+</div>
+</body>
+</html>
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+      
